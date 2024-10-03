@@ -25,9 +25,15 @@ with select:
     grid = [cell for row in rows for cell in row]
     for cell, video in zip(grid, st.session_state.videos):
         cell.video(video)
+    # TODO: 
+    # use st.selectbox to select a video
 
 with crop:
+    # TODO:
+    # use some annotation tool to crop the frame
     st.empty()
 
 with process:
+    # TODO:
+    # use some model to process the frame
     st.empty()
