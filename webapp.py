@@ -1,4 +1,8 @@
 import streamlit as st
+from PIL import Image
+import cv2
+import tempfile
+from streamlit_cropper import st_cropper
 
 
 upload = st.expander("Upload Videos",expanded=True)
@@ -42,7 +46,32 @@ with select:
 with crop:
     # TODO:
     # use some annotation tool to crop the frame from the selected video
-    st.empty()
+
+        if videos and 'selected_video_index' in locals(): 
+            st.write(f"Cropping frame from {selected_video_name}")
+
+        # Load the selected video using OpenCV
+        video_file = videos[selected_video_index]
+        tfile = tempfile.NamedTemporaryFile(delete=False)
+        tfile.write(video_file.read())
+
+        vidcap = cv2.VideoCapture(tfile.name)
+        success, frame = vidcap.read()
+
+        if success:
+            # converting frame
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img_pil = Image.fromarray(frame_rgb)
+
+            cropped_img = st_cropper(img_pil, realtime_update=True, box_color='blue', aspect_ratio=None)
+
+            if cropped_img:
+                st.image(cropped_img, caption="Cropped Image")
+
+            else:
+                st.write("Could not extract frame from the video.")
+        else:
+            st.write("Please select a video to crop.")
 
 with process:
     # TODO:
